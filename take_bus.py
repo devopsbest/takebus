@@ -1,5 +1,6 @@
 import json
 import math
+
 import requests
 
 line_name = 927
@@ -51,6 +52,7 @@ def retry_for_errors(errors=Exception, retry_times=max_retry_times,
 
     return wrapper_
 
+
 @retry_for_errors()
 def get_cars_detail(line_name, line_id, stop_id, direction):
     my_url = url.format(line_name, line_id, stop_id, direction)
@@ -98,7 +100,7 @@ def get_cars_info():
                                                                                            (car_list[0][2] +
                                                                                             next_car_list[0][2])))
             car_info.append([next_car_list[0][0], car_list[0][1] + next_car_list[0][1],
-                           car_list[0][2] + next_car_list[0][2]])
+                             car_list[0][2] + next_car_list[0][2]])
         except Exception as e:
             print(e)
 
@@ -108,6 +110,10 @@ def get_cars_info():
         print("More than 1 car are coming, the car are: {}".format(car_list))
 
 
+import arrow
+
+current_time = arrow.now()
+
 if __name__ == "__main__":
     car_info = get_cars_info()
 
@@ -115,11 +121,15 @@ if __name__ == "__main__":
 
     if len(car_info) == 1:
 
-        tkinter.messagebox.showinfo('重要提醒',
-                                    "你等的车，终于来了！the first one {} has {} stops, about {} minutes".format(
-                                        car_info[0][0], car_info[0][1], car_info[0][2]))
+        tkinter.messagebox.showinfo('车即将来了',
+                                    "1: {} has {} stops, about {} minutes, at {}".format(
+                                        car_info[0][0], car_info[0][1], car_info[0][2],
+                                        current_time.shift(minutes=int(car_info[0][2])).format("HH:mm")))
     else:
-        tkinter.messagebox.showinfo('重要提醒',
-                                    "你等的车，终于来了！the first one {} has {} stops, about {} minutes; \n The second one {} has {} stops, about {} minutes".format(
-                                        car_info[0][0], car_info[0][1], car_info[0][2], car_info[1][0], car_info[1][1], car_info[1][2]))
-
+        tkinter.messagebox.showinfo('车即将来了',
+                                    "1： {} has {} stops, about {} minutes, at {}; \n "
+                                    "2： {} has {} stops, about {} minutes, at {};".format(
+                                        car_info[0][0], car_info[0][1], car_info[0][2],
+                                        current_time.shift(minutes=int(car_info[0][2])).format("HH:mm"), car_info[1][0],
+                                        car_info[1][1], car_info[1][2],
+                                        current_time.shift(minutes=int(car_info[1][2])).format("HH:mm")))
